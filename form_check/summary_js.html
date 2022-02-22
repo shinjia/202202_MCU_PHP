@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>表單檢查</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<h2>各種表單元件的資料檢查</h2>
+<form id="form1" method="post" action="result.php" onSubmit="return check_data();">
+
+  <h3>問題一：姓名不得為空白 (文字欄位 text)</h3>
+  <p>姓名 <input type="text" name="nickname" id="nickname"></p>
+
+  
+  <h3>問題二：確認必須打勾 (核取方塊 checkbox)</h3>
+  <p>確認 <input type="checkbox" name="sure" id="sure" value="Y"></p>
+  
+  
+  <h3>問題三：血型必須有選擇 (選項按鈕 radio)</h3>
+  <p>血型<br />
+    <input type="radio" name="blood" id="blood1" value="A">A
+    <input type="radio" name="blood" id="blood2" value="B">B
+    <input type="radio" name="blood" id="blood3" value="O">O
+    <input type="radio" name="blood" id="blood4" value="AB">AB
+  </p>
+    
+  
+  <h3>問題四：職業必須有選擇 (下拉清單 select)</h3>
+  <p>職業
+  <select name="job" id="job">
+    <option value="X" SELECTED>請下拉選擇一項</option>
+    <option value="1">學生</option>
+    <option value="2">上班族</option>
+    <option value="3">家管</option>
+    <option value="4">自由業</option>
+    <option value="5">其他</option>
+  </select>
+  </p>
+  
+  
+  <h3>問題五：備註必須有內容 (文字方塊 textarea)</h3>
+  <p>備註
+  <textarea name="memo" id="memo" cols="30" rows="3"></textarea>
+  </p>
+  
+  
+  <p><input type="submit" value="送出資料"></p>
+</form>
+
+
+<script>
+document.getElementById('form1').onsubmit = function(){ return check_data(); };
+
+function check_data()
+{
+   var flag = true;
+   var message = '';
+
+   // ---------- Check 1 ----------
+  // 檢查姓名 (文字欄位必須有值)
+   var t = document.getElementById('nickname');
+   if(t.value=='')
+   {
+      flag = false;
+      message += '(1) 姓名不能為空白\n';
+   }
+
+  
+   // ---------- Check 2 ----------
+   // 檢查確認 (核取方塊checkbox必須勾選) 
+   var sure = document.getElementById('sure');
+   if(!sure.checked)
+   {
+      flag = false;
+      message += '(2) 請勾選確認欄\n';
+   }
+
+    
+   // ---------- Check 3 ----------
+   // 檢查血型 (選項欄位radio必須有選擇)
+   // 因同一組radio選項，故須特別注意各個name是相同，但各個id屬性值均不同
+
+   // 方法1：使用 id 屬性
+   // 逐一檢查
+   var is_choice = false;
+   if(document.getElementById('blood1').checked) is_choice = true;
+   if(document.getElementById('blood2').checked) is_choice = true;
+   if(document.getElementById('blood3').checked) is_choice = true;
+   if(document.getElementById('blood4').checked) is_choice = true;
+   
+   if(!is_choice)
+   {
+      flag = false;
+      message += '(3a) 血型(方法1)一定要選一種\n';
+   }
+  
+   // 方法2：使用 name 屬性
+   // 因同一組radio選項，有相同名稱，形成陣列，故須以迴圈取得陣列中各個元素
+   var b = document.getElementsByName('blood');
+   var is_choice = false;
+   for(i=0; i<b.length; i++)
+   {
+      if(b[i].checked)
+      {
+         is_choice = true;
+      }    
+   }
+   if(!is_choice)
+   {
+      flag = false;
+      message += '(3b) 血型(方法2)一定要選一種\n';
+   }
+
+ 
+   // ---------- Check 4 ----------
+   // 檢查職業欄 (選項欄位select一定要選)
+   var job = document.getElementById('job').value;
+   if(job=="X")
+   {
+   	  flag = false;
+   	  message += '(4) 職業一定要選一種\n';
+   }
+
+  
+   // ---------- Check 5 ----------
+   // 檢查備註欄位 (文字方塊必須要有內容，和text相同)
+   var memo = document.getElementById('memo');
+   if(memo.value=='')
+   {
+      flag = false;
+   	  message += '(5) 備註不能為空白\n';
+   }
+  
+  
+   // 最後處理
+   if(!flag) 
+   {
+      alert(message);
+   }
+   
+   return flag;
+}
+</script>
+</body>
+</html>

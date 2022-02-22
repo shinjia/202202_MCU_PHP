@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Form Check</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+<h2>資料輸入</h2>
+<form method="post" action="result.php" onsubmit="return check_data();">
+  <p>姓名：
+      <input type="text" name="receiver" id="receiver" />
+  </p>
+  <p>電話：
+      <input type="text" name="phone" id="phone" />
+  </p>
+  <p>確認：
+      <input type="checkbox" name="sure" id="sure" value="Y" />
+  </p>
+  <p>
+    <input type="submit" value="送出" />
+  </p>
+</form>
+
+<script>
+document.getElementById('form1').onsubmit = function(){ return check_data(); };
+
+function check_data()
+{
+   // 檢查收件者
+   var receiver = document.getElementById('receiver');
+   if(receiver.value=='')
+   {
+      alert('收件者不得為空白');
+      return false;
+   }
+
+   // 檢查電話
+   var phone = document.getElementById('phone');
+   if(phone.value=='')
+   {
+      alert('電話不得為空白');
+      return false;
+   }
+
+   // 檢查確認勾選
+   var sure = document.getElementById('sure');
+   if(!sure.checked)
+   {
+      alert('確認項目必須勾選');
+      return false;
+   }
+
+}
+</script>
+</body>
+</html>
