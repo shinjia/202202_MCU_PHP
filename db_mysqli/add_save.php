@@ -17,10 +17,15 @@ $link = db_open();
 $sqlstr = "INSERT INTO person(usercode, username, address, birthday, height, weight, remark) VALUES ('$usercode', '$username', '$address', '$birthday', '$height', '$weight', '$remark') ";
 
 // 執行 SQL
+
 if(mysqli_query($link, $sqlstr))
 {
    $new_uid = mysqli_insert_id($link);    // 傳回剛才新增記錄的 auto_increment 的欄位值
-   
+   $url = 'display.php?uid=' . $new_uid;
+
+   header('Location: ' . $url);
+   exit;
+
    $msg = '資料已新增!!!!!!!!<br/>';
    $msg .= '<a href="display.php?uid=' . $new_uid . '">詳細</a>';
 }

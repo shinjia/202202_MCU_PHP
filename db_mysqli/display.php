@@ -12,16 +12,35 @@ $sqlstr = "SELECT * FROM person WHERE uid=" . $uid;
 // 執行 SQL
 $result = mysqli_query($link, $sqlstr);
 
+// $row = mysqli_fetch_row($result);
+// $row = mysqli_fetch_assoc($result);
+// $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+// $row = mysqli_fetch_all($result);
+/*
+foreach($row as $key=>$value)
+{
+  echo $key . '--->' . $value;
+  echo '<br/>';
+}
+echo '<pre>';
+print_r($row);
+echo '</pre>';
+exit;
+*/
+
 if($row=mysqli_fetch_array($result, MYSQLI_ASSOC))
 {
    $uid      = $row['uid'];
    $usercode = $row['usercode'];
    $username = $row['username'];
    $address  = $row['address'];
-   $birthday = $row['birthday'];
+   // $birthday = substr($row['birthday'], 0, 4);
+   $birthday = date('Y', strtotime($row['birthday']));
    $height   = $row['height'];
    $weight   = $row['weight'];
    $remark   = $row['remark'];
+
+   $age = date('Y', time()) - substr($row['birthday'], 0, 4) + 1;
 
    $data = <<< HEREDOC
    <table border="1">
@@ -39,7 +58,7 @@ if($row=mysqli_fetch_array($result, MYSQLI_ASSOC))
       </tr>
       <tr>
         <th>生日</th>
-        <td>{$birthday}</td>
+        <td>{$birthday} ；{$age}歲</td>
       </tr>
       <tr>
         <th>身高</th>

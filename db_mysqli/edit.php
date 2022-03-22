@@ -8,6 +8,7 @@ $uid = isset($_GET['uid']) ? $_GET['uid'] : 0;
 $link = db_open();
 
 $sqlstr = "SELECT * FROM person WHERE uid=" . $uid;
+
 $result = mysqli_query($link, $sqlstr);
 
 if($row=mysqli_fetch_array($result))

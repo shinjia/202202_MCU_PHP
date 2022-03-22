@@ -24,9 +24,12 @@ $sqlstr .= "weight  ='$weight'  , ";
 $sqlstr .= "remark  ='$remark' ";  // 注意最後欄位沒有逗號
 $sqlstr .= "WHERE uid=" . $uid;
 
-
 if(mysqli_query($link, $sqlstr))
 {
+   $url = 'display.php?uid=' . $uid;
+   header('Location: ' . $url);
+   exit;
+   
    $msg = '資料已修改完畢!!!!!!!!';
    $msg .= '<br><a href="display.php?uid=' . $uid . '">詳細</a>';
 }

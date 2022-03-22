@@ -19,7 +19,6 @@ $sqlstr .= " LIMIT " . $tmp_start . "," . $numpp;
 
 $result = mysqli_query($link, $sqlstr);
 
-
 $data = '';
 while($row=mysqli_fetch_array($result))
 {

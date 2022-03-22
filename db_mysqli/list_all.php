@@ -9,7 +9,7 @@ $sqlstr = "SELECT * FROM person ";
 
 $result = mysqli_query($link, $sqlstr);
 
-$total_rec = mysqli_num_rows($result);
+$total_rec = mysqli_num_rows($result);  // SQL影響的筆數
 
 $data = '';
 while($row=mysqli_fetch_array($result, MYSQLI_ASSOC))
