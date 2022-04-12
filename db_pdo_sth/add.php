@@ -1,6 +1,6 @@
 <?php
 
-$html = <<< HEREDOC
+$content = <<< HEREDOC
 <button onclick="history.back();">返回</button>
 <h2>新增資料</h2>
 <form action="add_save.php" method="post">
@@ -18,5 +18,5 @@ $html = <<< HEREDOC
 HEREDOC;
 
 include 'pagemake.php';
-pagemake($html, '');
+pagemake($content);
 ?>

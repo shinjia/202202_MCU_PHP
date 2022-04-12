@@ -16,7 +16,6 @@ define('ERROR_CHARSET',  'Set charset error');  // 無法設定指定的校對�
 
 // For PDO MySQL
 define('DB_SOURCE', 'mysql:host='.DB_SERVERIP.';dbname='.DB_DATABASE);
-// define('DB_SOURCE', 'mysql:host=localhost; dbname=class');
 
 
 function db_open()
@@ -32,4 +31,5 @@ function db_open()
 function db_close()
 {
 }
+
 ?>
