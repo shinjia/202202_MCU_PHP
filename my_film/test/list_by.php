@@ -25,11 +25,6 @@ switch($type)
       $sql_where = "WHERE tag_cast LIKE '%@" . $key . "%' ";
       break;
 
-   case 'NOTE' :  //       
-      $title_type = '關於『' . $key . '』的電影';
-      $sql_where = "WHERE tag_note LIKE '#" . $key . "' ";
-      break;
-
    case 'YEAR' :  // 年度
       $title_type = '年度『' . $key . '』的電影';
       $sql_where = "WHERE filmyear = '" . $key . "' ";

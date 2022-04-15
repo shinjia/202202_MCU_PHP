@@ -20,6 +20,7 @@ if($sth->execute())
    while($row = $sth->fetch(PDO::FETCH_ASSOC))
    {
       $tag_cast = $row['tag_cast'];
+
       $a_item = explode(' ', $tag_cast);
 
       foreach($a_item as $one)

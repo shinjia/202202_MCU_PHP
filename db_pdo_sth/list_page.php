@@ -33,16 +33,17 @@ while($row = $sth->fetch(PDO::FETCH_ASSOC))
    $data .= <<< HEREDOC
      <tr align="center">
        <td>{$uid}</td>
-       <td>{$usercode}</td>
        <td>{$username}</td>
        <td>{$address}</td>
        <td>{$birthday}</td>
        <td>{$height}</td>
        <td>{$weight}</td>
        <td>{$remark}</td>
-       <td><a href="display.php?uid=$uid">詳細</a></td>
-       <td><a href="edit.php?uid=$uid">修改</a></td>
-       <td><a href="delete.php?uid=$uid" onClick="return confirm('確定要刪除嗎？');">刪除</a></td>
+       <td>
+         <a href="display.php?uid=$uid" class="btn btn-success">詳細</a>
+         <a href="edit.php?uid=$uid"    class="btn btn-warning">修改</a>
+         <a href="delete.php?uid=$uid"  class="btn btn-danger" onClick="return confirm('確定要刪除嗎？');">刪除</a>
+       </td>
     </tr>
 HEREDOC;
 }
@@ -106,17 +107,16 @@ HEREDOC;
 $html = <<< HEREDOC
 <h2 align="center">共有 $total_rec 筆記錄</h2>
 {$ihc_navigator}
-<table border="1" align="center">   
-   <tr>
+<table class="table table-hover">   
+   <tr class="table-primary">
       <th>序號</th>
-      <th>代碼</th>
       <th>姓名</th>
       <th>地址</th>
       <th>生日</th>
       <th>身高</th>
       <th>體重</th>
       <th>備註</th>
-      <th colspan="3" align="center"><a href="add.php">新增記錄</a></th>
+      <th align="center"><a href="add.php" class="btn btn-primary">新增記錄</a></th>
    </tr>
 {$data}
 </table>

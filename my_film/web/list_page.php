@@ -44,20 +44,23 @@ while($row = $sth->fetch(PDO::FETCH_ASSOC))
    $str_dban = (empty($key_dban))?'':('<a href="https://movie.douban.com/subject/' . $key_dban . '/" target="_blank">豆瓣</a>');
    $str_note = (empty($key_note))?'':('<a href="https://hackmd.io/' . $key_note . '" target="_blank">HackMD</a>');
 
+
    $data .= <<< HEREDOC
      <tr>
       <td>{$filmyear}</td>
       <td>{$pub_date}</td>
-      <td>{$title_c}</td>
+      <td><a href="display.php?uid={$uid}">{$title_c}</a></td>
       <td>{$title_e}</td>
       <td>{$area}</td>
       <td>{$rate}</td>
+      <!--
       <td>{$str_google}</td>
       <td>{$str_wiki}</td>
       <td>{$str_imdb}</td>
       <td>{$str_dban}</td>
       <td>{$str_note}</td>
       <td>{$remark}</td>
+      -->
     </tr>
 HEREDOC;
 }
@@ -129,12 +132,14 @@ $html = <<< HEREDOC
       <th>英名片名</th>
       <th>國家</th>
       <th>評分</th>
+      <!--
       <th>Google</th>
       <th>Wiki</th>
       <th>IMDb</th>
       <th>豆瓣</th>
       <th>筆記</th>
       <th>備註</th>
+      -->
    </tr>
 {$data}
 </table>

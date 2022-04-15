@@ -29,7 +29,7 @@ if($sth->execute())
       $remark   = convert_to_html($row['remark']);
    
       $data = <<< HEREDOC
-       <table>
+       <table class="table">
          <tr><th>代碼</th><td>{$usercode}</td></tr>
          <tr><th>姓名</th><td>{$username}</td></tr>
          <tr><th>地址</th><td>{$address}</td></tr>
@@ -53,7 +53,7 @@ else
 
 
 $html = <<< HEREDOC
-<button onclick="location.href='list_page.php';">返回列表</button>
+<button class="btn btn-success" onclick="location.href='list_page.php';">返回列表</button>
 <h2>顯示資料</h2>
 {$data}
 HEREDOC;
