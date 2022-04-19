@@ -7,7 +7,7 @@ $type = isset($_GET['type']) ? $_GET['type'] : 'X';
 $key = isset($_GET['key']) ? $_GET['key'] : 'X*&^*';
 $page = isset($_GET['page']) ? $_GET['page'] : 1;   // 目前的頁碼
 
-$numpp = 15;  // 每頁的筆數
+$numpp = 10;  // 每頁的筆數
 
 /* 依據 type 會有不同結果的變數 */
 $title_type = '';  // 標題
@@ -137,18 +137,18 @@ $total_page = ceil($total_rec / $numpp);  // 計算總頁數
 
 
 // 處理分頁之超連結：上一頁、下一頁、第一首、最後頁
-$lnk_pageprev = '?key=' . $key . '&page=' . (($page==1)?(1):($page-1));
-$lnk_pagenext = '?key=' . $key . '&page=' . (($page==$total_page)?($total_page):($page+1));
-$lnk_pagehead = '?key=' . $key . '&page=1';
-$lnk_pagelast = '?key=' . $key . '&page=' . $total_page;
+$lnk_pageprev = '?type=' . $type . '&key=' . $key . '&page=' . (($page==1)?(1):($page-1));
+$lnk_pagenext = '?type=' . $type . '&key=' . $key . '&page=' . (($page==$total_page)?($total_page):($page+1));
+$lnk_pagehead = '?type=' . $type . '&key=' . $key . '&page=1';
+$lnk_pagelast = '?type=' . $type . '&key=' . $key . '&page=' . $total_page;
 
 // 處理各頁之超連結：列出所有頁數 (暫未用到，保留供參考)
 $lnk_pagelist = '';
 for($i=1; $i<=$page-1; $i++)
-{ $lnk_pagelist .= '<a href="?key=' . $key . '&page='.$i.'">'.$i.'</a> '; }
+{ $lnk_pagelist .= '<a href="?type=' . $type . '&key=' . $key . '&page='.$i.'">'.$i.'</a> '; }
 $lnk_pagelist .= '[' . $i . '] ';
 for($i=$page+1; $i<=$total_page; $i++)
-{ $lnk_pagelist .= '<a href="?key=' . $key . '&page='.$i.'">'.$i.'</a> '; }
+{ $lnk_pagelist .= '<a href="?type=' . $type . '&key=' . $key . '&page='.$i.'">'.$i.'</a> '; }
 
 // 處理各頁之超連結：下拉式跳頁選單
 $lnk_pagegoto  = '<form method="GET" action="" style="margin:0;">';
@@ -159,6 +159,7 @@ for($i=1; $i<=$total_page; $i++)
    $lnk_pagegoto .= '<option' . $is_current . '>' . $i . '</option>';
 }
 $lnk_pagegoto .= '</select>';
+$lnk_pagegoto .= '<input type="hidden" name="type" value="' . $type . '">';
 $lnk_pagegoto .= '<input type="hidden" name="key" value="' . $key . '">';
 $lnk_pagegoto .= '</form>';
 

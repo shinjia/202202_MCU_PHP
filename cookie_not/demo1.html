@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<h1>Demo1：拜訪網站的次數</h1>
+<p><span id="msg_visit"></span></p>
+
+<script>
+    let key_save = 'cookie_visited_count'; // 這個頁面儲存的 localStrage 
+
+    let visited_count;
+    let str = localStorage.getItem(key_save);
+
+    let msg = '';
+    if(str===null)
+    {
+        visited_count = 2;
+        msg = '歡迎，這是你第一次到此網頁！'
+    }
+    else
+    {
+        visited_count = parseInt(str) + 1;
+        msg = '你是第 ' + str + ' 次拜訪這個網頁'
+    }
+    
+    localStorage.setItem(key_save, visited_count);
+    document.getElementById('msg_visit').innerHTML = msg;
+</script>
+
+</body>
+</html>

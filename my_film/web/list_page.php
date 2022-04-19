@@ -5,7 +5,7 @@ include '../common/utility.php';
 
 $page = isset($_GET['page']) ? $_GET['page'] : 1;   // 目前的頁碼
 
-$numpp = 15;  // 每頁的筆數
+$numpp = 10;  // 每頁的筆數
 
 // 連接資料庫
 $pdo = db_open(); 
@@ -49,7 +49,8 @@ while($row = $sth->fetch(PDO::FETCH_ASSOC))
      <tr>
       <td>{$filmyear}</td>
       <td>{$pub_date}</td>
-      <td><a href="display.php?uid={$uid}">{$title_c}</a></td>
+      <td><a href="display.php?uid={$uid}" onclick="save_view({$uid},'{$title_c}');">{$title_c}</a></td>
+      <td><button onclick="save_view({$uid},'{$title_c}');">{$title_c}</button></td>
       <td>{$title_e}</td>
       <td>{$area}</td>
       <td>{$rate}</td>
@@ -143,6 +144,69 @@ $html = <<< HEREDOC
    </tr>
 {$data}
 </table>
+
+<h2>最近瀏覽項目</h2>
+<div id="recent_view"></div>
+
+<script>
+function show_all()
+{
+	var str = '';
+	for(idx in data.items)
+	{
+		item_one = data.items[idx];
+
+		uid     = item_one.uid;
+		title_c = item_one.title_c;
+
+		// str += '<input type="button" value="刪" onclick="remove('+idx+');"> ';
+		str += uid + ', ' + title_c + '<br />';
+	}
+	document.getElementById('recent_view').innerHTML = str;
+}
+
+function retrieve_view()
+{
+   data = JSON.parse(localStorage.recent_view);
+   show_all();
+}
+
+function save_view(_uid, _title_c)
+{
+   var dataObject = { uid: _uid, title_c: _title_c };
+
+   // 先檢查是否已存在
+   var found = false;
+	for(idx in data.items)
+	{
+		item_one = data.items[idx];
+      if(item_one.uid==_uid) found = true;
+   }
+
+   if(!found)
+   {
+      // 超過數量則移除一項
+      if(data.items.length>=data_max)
+      {
+         data.items.shift();
+      }
+
+      // Put the object into storage
+      data.items.push(dataObject);
+
+      var str1 = JSON.stringify(data);
+      localStorage.setItem('recent_view', str1);
+   }
+   show_all();
+}
+</script>
+
+<script>
+var data_max = 6;
+var data = {items: []};
+retrieve_view();
+</script>
+
 HEREDOC;
 
 include 'pagemake.php';

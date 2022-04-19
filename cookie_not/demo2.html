@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<h1>Demo 2：記住我的資料</h1>    
+<form method="post" action="#" onsubmit="return before_send();">
+    姓名：<input type="text" name="name" id="name" value=""><br />
+    信箱：<input type="text" name="mail" id="mail" value=""><br />
+    記住我的資料 <input type="checkbox" name="keep" id="keep" value="Y"><br />
+    <input type="submit" value="SEND">
+</form>
+
+<script>
+// 這個頁面儲存的 localStrage 
+let key_save = 'cookie_keepdata';
+let obj;
+
+let str = localStorage.getItem(key_save);
+if(str===null)
+{
+    obj = {name:'', mail:'', keep:false};
+}
+else
+{
+    obj = JSON.parse(str);    
+    console.log(obj);
+
+    document.getElementById('name').value = obj.name;
+    document.getElementById('mail').value = obj.mail;
+    document.getElementById('keep').checked = obj.keep;
+}
+console.log(obj);
+
+
+function before_send()
+{
+    let obj = new Object();
+    obj.name = document.getElementById('name').value;
+    obj.mail = document.getElementById('mail').value;
+    obj.keep = document.getElementById('keep').checked;
+
+    if(!obj.keep)
+    {
+        obj = {name:'', mail:'', keep:false};
+    }
+    
+    localStorage.setItem(key_save, JSON.stringify(obj));
+    return true;
+}
+</script>
+
+</body>
+</html>
