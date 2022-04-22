@@ -51,9 +51,10 @@ while($row = $sth->fetch(PDO::FETCH_ASSOC))
       <td>{$pub_date}</td>
       <td><a href="display.php?uid={$uid}" onclick="save_view({$uid},'{$title_c}');">{$title_c}</a></td>
       <td><button onclick="save_view({$uid},'{$title_c}');">{$title_c}</button></td>
-      <td>{$title_e}</td>
       <td>{$area}</td>
       <td>{$rate}</td>
+      <td><a href="display_omdb.php?imdb={$key_imdb}">{$key_imdb}</a></td>
+      <td><a href="display_omdb_js.php?uid={$uid}">{$key_imdb}</a></td>
       <!--
       <td>{$str_google}</td>
       <td>{$str_wiki}</td>
@@ -130,9 +131,11 @@ $html = <<< HEREDOC
       <th>年度</th>
       <th>首映日</th>
       <th>片名</th>
-      <th>英名片名</th>
+      <th>測試最近瀏覽</th>
       <th>國家</th>
       <th>評分</th>
+      <th>OMDB(法一)</th>
+      <th>OMDB(法二)</th>
       <!--
       <th>Google</th>
       <th>Wiki</th>

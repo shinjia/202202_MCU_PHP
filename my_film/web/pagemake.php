@@ -1,6 +1,6 @@
 <?php
 
-function pagemake($content='', $head='')
+function pagemake($content='', $head='', $js_after='')
 {  
   $html = <<< HEREDOC
 <!DOCTYPE html>
@@ -60,6 +60,14 @@ div#footer {
       | <a href="list_page.php">資料列表</a> 
       | <a href="all_cast.php">所有人員</a> 
       | <a href="all_note.php">所有標籤</a> 
+      | <br/>
+      | 統計
+          [<a href="stat_by.php?type=STAT1">YEAR</a>] 
+          [<a href="stat_by.php?type=STAT2">AREA</a>] 
+          [<a href="stat_by.php?type=STAT3">RATE</a>] 
+      | <a href="stat_by_year.php">年度圖表</a>
+      | <a href="stat_by_area.php">地區圖表</a>
+      | <a href="stat_by_rate.php">評分圖表</a>
       |
    </div>
   
@@ -73,6 +81,7 @@ div#footer {
 
 </div>
 
+{$js_after}
 </body>
 </html>  
 HEREDOC;
