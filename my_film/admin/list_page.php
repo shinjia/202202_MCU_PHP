@@ -56,6 +56,25 @@ while($row = $sth->fetch(PDO::FETCH_ASSOC))
    $tag_note = convert_to_html($row['tag_note']);
    $remark   = convert_to_html($row['remark']);
    
+   // 海報圖檔
+   $str_poster = '';
+   $filename_poster = '../images_poster/' . $key_imdb . '.jpg';
+   if(!empty($key_imdb))
+   {
+      if(file_exists($filename_poster))
+      {
+         $str_poster = '<img src="' . $filename_poster . '" style="width:60px;">';
+      }
+      else
+      {
+         $str_poster = '<a href="get_omdb_poster.php?imdb=' . $key_imdb . '" target="_blank">取得圖檔</a>';
+      }
+   }
+   else
+   {
+      $str_poster = '無imdb';
+   }
+
    $data .= <<< HEREDOC
    <tr>
       <td>{$pub_date}</td>
@@ -66,6 +85,7 @@ while($row = $sth->fetch(PDO::FETCH_ASSOC))
             title="{$title_e}">{$title_c}</a></td>
       <td>{$area}</td>
       <td>{$rate}</td>
+      <td>{$str_poster}</td>
       <td>{$remark}</td>
       <!--
       <td><a href="display.php?uid=$uid" class="btn btn-sm btn-info">詳細</a></td>
@@ -143,6 +163,7 @@ $html = <<< HEREDOC
       <th>片名</th>
       <th>國家</th>
       <th>評分</th>
+      <th>圖檔</th>
       <th>備註</th>
       <th><a href="add.php" class="btn btn-sm btn-primary">新增記錄</a></th>
    </tr>
