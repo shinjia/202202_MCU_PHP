@@ -5,7 +5,9 @@ include '../common/utility.php';
 
 $page = isset($_GET['page']) ? $_GET['page'] : 1;   // 目前的頁碼
 
-$numpp = 10;  // 每頁的筆數
+$numpp = 12;  // 每頁的筆數
+$numpp = isset($_COOKIE['numpp']) ? $_COOKIE['numpp'] : $numpp;
+$numpp = isset($_GET['numpp']) ? $_GET['numpp'] : $numpp;
 
 // 連接資料庫
 $pdo = db_open(); 
@@ -16,6 +18,28 @@ $tmp_start = ($page-1) * $numpp;  // 擷取記錄之起始位置
 $sqlstr = "SELECT * FROM film ";
 $sqlstr .= " LIMIT " . $tmp_start . "," . $numpp;
 
+$showtype = isset($_COOKIE['showtype']) ? $_COOKIE['showtype'] : 1;
+
+switch($showtype)
+{
+   case 1:
+      $file_st = 'process_data1.php';
+      break;
+   case 2:
+      $file_st = 'process_data2.php';
+      break;
+   default:
+      $file_st = 'process_data.php';
+}
+
+include $file_st;
+
+
+
+// include 'process_data.php';  // 會得到 $data 內容
+
+
+/*
 // 執行SQL及處理結果
 $data = '';
 $sth = $pdo->query($sqlstr);
@@ -66,6 +90,8 @@ while($row = $sth->fetch(PDO::FETCH_ASSOC))
     </tr>
 HEREDOC;
 }
+*/
+
 
 // ------ 分頁處理開始 -------------------------------------
 // 
@@ -106,7 +132,7 @@ $lnk_pagegoto .= '</form>';
 
 // 將各種超連結組合成HTML顯示畫面
 $ihc_navigator  = <<< HEREDOC
-<table border="0" align="center">
+<table border="0" style="margin-left: auto; margin-right: auto;">
  <tr>
   <td>頁數：{$page} / {$total_page} &nbsp;&nbsp;&nbsp;</td>
   <td>
@@ -122,96 +148,20 @@ $ihc_navigator  = <<< HEREDOC
 HEREDOC;
 // ------ 分頁處理結束 -------------------------------------
 
+if($total_page==1)
+{
+   $ihc_navigator = '';
+}
+
 
 $html = <<< HEREDOC
 <h2 align="center">共有 $total_rec 筆記錄</h2>
 {$ihc_navigator}
-<table border="1" align="center">   
-   <tr>
-      <th>年度</th>
-      <th>首映日</th>
-      <th>片名</th>
-      <th>測試最近瀏覽</th>
-      <th>國家</th>
-      <th>評分</th>
-      <th>OMDB(法一)</th>
-      <th>OMDB(法二)</th>
-      <!--
-      <th>Google</th>
-      <th>Wiki</th>
-      <th>IMDb</th>
-      <th>豆瓣</th>
-      <th>筆記</th>
-      <th>備註</th>
-      -->
-   </tr>
 {$data}
-</table>
-
-<h2>最近瀏覽項目</h2>
-<div id="recent_view"></div>
-
-<script>
-function show_all()
-{
-	var str = '';
-	for(idx in data.items)
-	{
-		item_one = data.items[idx];
-
-		uid     = item_one.uid;
-		title_c = item_one.title_c;
-
-		// str += '<input type="button" value="刪" onclick="remove('+idx+');"> ';
-		str += uid + ', ' + title_c + '<br />';
-	}
-	document.getElementById('recent_view').innerHTML = str;
-}
-
-function retrieve_view()
-{
-   data = JSON.parse(localStorage.recent_view);
-   show_all();
-}
-
-function save_view(_uid, _title_c)
-{
-   var dataObject = { uid: _uid, title_c: _title_c };
-
-   // 先檢查是否已存在
-   var found = false;
-	for(idx in data.items)
-	{
-		item_one = data.items[idx];
-      if(item_one.uid==_uid) found = true;
-   }
-
-   if(!found)
-   {
-      // 超過數量則移除一項
-      if(data.items.length>=data_max)
-      {
-         data.items.shift();
-      }
-
-      // Put the object into storage
-      data.items.push(dataObject);
-
-      var str1 = JSON.stringify(data);
-      localStorage.setItem('recent_view', str1);
-   }
-   show_all();
-}
-</script>
-
-<script>
-var data_max = 6;
-var data = {items: []};
-retrieve_view();
-</script>
-
 HEREDOC;
 
+$js_after = '<script src="recent.js"></script>';
+
 include 'pagemake.php';
-pagemake($html, '');
+pagemake($html, '', $js_after);
 ?>

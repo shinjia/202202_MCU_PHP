@@ -34,6 +34,13 @@ if($sth->execute())
       $tag_note = convert_to_html($row['tag_note']);
       $remark   = convert_to_html($row['remark']);
    
+      // 海報圖檔
+      $str_poster = '';
+      $filename_poster = '../images_poster/' . $key_imdb . '.jpg';
+      if(file_exists($filename_poster))
+      {
+         $str_poster = '<img src="' . $filename_poster . '" style="width:300px;">';
+      }
 
       // 處理更多的顯示
       $str_google = '<a href="https://www.google.com/search?q=' . $title_c . '" target="_blank">Google</a>';
@@ -46,6 +53,7 @@ if($sth->execute())
       // 加入相關的連結
       $url_filmyear = 'list_by.php?type=YEAR&key=' . $filmyear;
       $url_area = 'list_by.php?type=AREA&key=' . $area;
+      $url_rate = 'list_by.php?type=RATE&key=' . $rate;
       
       // ****** BEGIN: 處理 tag_cast ******
       $a_item = explode(' ', $tag_cast);
@@ -65,18 +73,18 @@ if($sth->execute())
       // 顯示部分
       $str_direct = '';
       $str_player = '';
-      foreach($ary as $key=>$value)
+      foreach($ary as $k=>$value)
       {
-         if(substr($key,0,2)=='@@')
+         if(substr($k,0,2)=='@@')
          {
-            $name = substr($key,2);
+            $name = substr($k,2);
 
             // $str_direct .= $name;
             $str_direct .= '<a href="list_by.php?type=DIRECT&key=' . $name . '">' . $name . '</a>&nbsp;&nbsp;&nbsp; ';
          }
          else
          {
-            $name = substr($key,1);
+            $name = substr($k,1);
 
             // $str_player .= $name;
             $str_player .= '<a href="list_by.php?type=PLAYER&key=' . $name . '">' . $name . '</a>&nbsp;&nbsp;&nbsp; ';
@@ -101,55 +109,64 @@ if($sth->execute())
       }
 
       // 處理顯示的部分
-      $str_note = '';
-      $str_type1 = '';  // ## 開頭的系列
-      $str_type2 = '';  // ! 開頭的特定主題
-      foreach($ary as $key=>$value)
+      $str_type1 = '';  // ## 開頭的系列 (SERIAL)
+      $str_type2 = '';  // # 開頭的系列 (NOTE)
+      $str_type3 = '';  // ! 開頭的特定主題 (TOPIC)
+      foreach($ary as $k=>$value)
       {
-         if(substr($key, 0, 2)=='##')
+         if(substr($k, 0, 2)=='##')
          {
-            $name = substr($key,2);         
+            $name = substr($k,2);         
             // $str_type1 .= $name;
             $str_type1 .= '<a href="list_by.php?type=SERIAL&key=' . $name . '">' . $name . '</a> ';
          }
-         elseif(substr($key, 0, 1)=='#')
+         elseif(substr($k, 0, 1)=='#')
          {
-            $name = substr($key,1);
-            // $str_note .= $name;
-            $str_note .= '<a href="list_by.php?type=NOTE&key=' . $name . '">' . $name . '</a> ';
-         }
-         elseif(substr($key, 0, 1)=='!')
-         {
-            $name = substr($key,1);
+            $name = substr($k,1);
             // $str_type2 .= $name;
-            $str_type2 .= '<a href="list_by.php?type=TOPIC&key=' . $name . '">' . $name . '</a> ';
+            $str_type2 .= '<a href="list_by.php?type=NOTE&key=' . $name . '">' . $name . '</a> ';
+         }
+         elseif(substr($k, 0, 1)=='!')
+         {
+            $name = substr($k,1);
+            // $str_type3 .= $name;
+            $str_type3 .= '<a href="list_by.php?type=TOPIC&key=' . $name . '">' . $name . '</a> ';
          }
       }
       // ****** END: 處理 tag_note ******
 
       // 網頁顯示
       $data = <<< HEREDOC
+      <table border="0">
+      <tr>
+      <td valign="top">{$str_poster}</td>
+      <td>
+
        <table border="1">
          <tr><th>年度</th><td><a href="{$url_filmyear}">{$filmyear}</a></td></tr>
          <tr><th>首映日</th><td>{$pub_date}</td></tr>
          <tr><th>片名</th><td>{$title_c}</td></tr>
          <tr><th>英名片名</th><td>{$title_e}</td></tr>
          <tr><th>國家</th><td><a href="{$url_area}">{$area}</a></td></tr>
-         <tr><th>評分</th><td>{$rate}</td></tr>
+         <tr><th>評分</th><td><a href="{$url_rate}">{$rate}</a></td></tr>
          <tr><th>Google</th><td>{$str_google}</td></tr>
          <tr><th>key_Wiki</th><td>{$str_wiki}</td></tr>
          <tr><th>key_IMDb</th><td>{$str_imdb}</td></tr>
          <tr><th>key_豆瓣</th><td>{$str_dban}</td></tr>
-         <tr><th>key_筆記</th><td>{$key_note}</td></tr>
+         <tr><th>key_筆記</th><td>{$str_note}</td></tr>
          <tr><th>tag_人員</th><td>{$tag_cast}</td></tr>
          <tr><th>(*)導演：</th><td>{$str_direct}</td></tr>
          <tr><th>(*)演員：</th><td>{$str_player}</td></tr>
          <tr><th>tag_主題</th><td>{$tag_note}</td></tr>
          <tr><th>(*)SERIAL：</th><td>{$str_type1}</td></tr>
-         <tr><th>(*)TOPIC：</th><td>{$str_type2}</td></tr>
-         <tr><th>(*)NOTE：</th><td>{$str_note}</td></tr>
+         <tr><th>(*)NOTE：</th><td>{$str_type2}</td></tr>
+         <tr><th>(*)TOPIC：</th><td>{$str_type3}</td></tr>
          <tr><th>備註</th><td>{$remark}</td></tr>
        </table>
+       
+       </td>
+      </tr>
+      </table>
 HEREDOC;
 
 /*
