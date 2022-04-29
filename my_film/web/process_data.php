@@ -30,11 +30,21 @@ while($row = $sth->fetch(PDO::FETCH_ASSOC))
    // 處理更多的顯示
    $str_rate = str_repeat('⭐', $rate) . ' (' . $rate . ')';
 
+   // 處理外部連結的顯示
+   // 文字超連結
+   /*
    $str_google = '<a href="https://www.google.com/search?q=' . $title_c . '" target="_blank">Google</a>';
    $str_wiki = (empty($key_wiki))?'':('<a href="https://zh.wikipedia.org/wiki/' . $key_wiki . '" target="_blank">Wiki</a>');
    $str_imdb = (empty($key_imdb))?'':('<a href="https://www.imdb.com/title/' . $key_imdb . '/" target="_blank">IMDb</a>');
    $str_dban = (empty($key_dban))?'':('<a href="https://movie.douban.com/subject/' . $key_dban . '/" target="_blank">豆瓣</a>');
    $str_note = (empty($key_note))?'':('<a href="https://hackmd.io/' . $key_note . '" target="_blank">HackMD</a>');
+   */
+   // 圖片超連結
+   $str_google = '<a href="https://www.google.com/search?q=' . $title_c . '" target="_blank"><img src="../images/icon_google.jpg"></a>';
+   $str_wiki = (empty($key_wiki))?'':('<a href="https://zh.wikipedia.org/wiki/' . $key_wiki . '" target="_blank"><img src="../images/icon_wiki.jpg"></a>');
+   $str_imdb = (empty($key_imdb))?'':('<a href="https://www.imdb.com/title/' . $key_imdb . '/" target="_blank"><img src="../images/icon_imdb.jpg"></a>');
+   $str_dban = (empty($key_dban))?'':('<a href="https://movie.douban.com/subject/' . $key_dban . '/" target="_blank"><img src="../images/icon_dban.jpg"></a>');
+   $str_note = (empty($key_note))?'':('<a href="https://hackmd.io/' . $key_note . '" target="_blank"><img src="../images/icon_note.jpg"></a>');
 
    // 海報圖檔
    $str_poster = '';
@@ -128,7 +138,6 @@ while($row = $sth->fetch(PDO::FETCH_ASSOC))
 
 
    $data .= <<< HEREDOC
-   
 <div class="card">
 <div class="card-img" style="background-image:url({$str_poster});">
    <div class="overlay">

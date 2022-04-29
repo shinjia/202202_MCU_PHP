@@ -2,166 +2,103 @@
 // 含分頁之資料列表
 include '../common/config.php';
 include '../common/utility.php';
+include '../common/define.php';
+
+$cc_numpp = isset($_COOKIE['cc_numpp']) ? $_COOKIE['cc_numpp'] : DEF_CC_NUMPP;
+$cc_order = isset($_COOKIE['cc_order']) ? $_COOKIE['cc_order'] : DEF_CC_ORDER;
+$cc_style = isset($_COOKIE['cc_style']) ? $_COOKIE['cc_style'] : DEF_CC_STYLE;
+$cc_watch = isset($_COOKIE['cc_watch']) ? $_COOKIE['cc_watch'] : DEF_CC_WATCH;
 
 $page = isset($_GET['page']) ? $_GET['page'] : 1;   // 目前的頁碼
 
-$numpp = 12;  // 每頁的筆數
-$numpp = isset($_COOKIE['numpp']) ? $_COOKIE['numpp'] : $numpp;
-$numpp = isset($_GET['numpp']) ? $_GET['numpp'] : $numpp;
+$numpp = $cc_numpp;  // 每頁的筆數
+
+// include 別的檔案後必要的參數
+$type = '';
+$key = '';
+$title_type = '列出所有的資料記錄';
 
 // 連接資料庫
 $pdo = db_open(); 
 
 $tmp_start = ($page-1) * $numpp;  // 擷取記錄之起始位置
 
+$sql_where = ' WHERE TRUE ';
+
 // 寫出 SQL 語法
 $sqlstr = "SELECT * FROM film ";
+$sqlstr .= $sql_where;
+$sqlstr .= " ORDER BY pub_date ";
+$sqlstr .= ($cc_order=='NEW') ? "DESC" : "";
 $sqlstr .= " LIMIT " . $tmp_start . "," . $numpp;
 
-$showtype = isset($_COOKIE['showtype']) ? $_COOKIE['showtype'] : 1;
-
-switch($showtype)
+// Part1: 顯示風格
+$file_data = 'process_data.php';  // 預設
+switch($cc_style)
 {
-   case 1:
-      $file_st = 'process_data1.php';
+   case '1':
+      $file_data = 'process_data1.php';
       break;
-   case 2:
-      $file_st = 'process_data2.php';
+
+   case '2':
+      $file_data = 'process_data2.php';
       break;
+
+   case '3':
+      $file_data = 'process_data3.php';
+      break;
+
+   case '4':
+      $file_data = 'process_data4.php';
+      break;
+
    default:
-      $file_st = 'process_data.php';
 }
 
-include $file_st;
+include $file_data;
 
 
+// Part2: 處理分頁
+$file_page = 'process_page.php';  // 預設
+include $file_page;
 
-// include 'process_data.php';  // 會得到 $data 內容
 
-
-/*
-// 執行SQL及處理結果
-$data = '';
-$sth = $pdo->query($sqlstr);
-while($row = $sth->fetch(PDO::FETCH_ASSOC))
+// Parr3: 處理Boby
+$file_body = 'process_body.php';  // 預設
+switch($cc_style)
 {
-   $uid = $row['uid'];
-   
-   $filmyear = convert_to_html($row['filmyear']);
-   $pub_date = convert_to_html($row['pub_date']);
-   $title_c  = convert_to_html($row['title_c']);
-   $title_e  = convert_to_html($row['title_e']);
-   $area     = convert_to_html($row['area']);
-   $rate     = convert_to_html($row['rate']);
-   $key_wiki = convert_to_html($row['key_wiki']);
-   $key_imdb = convert_to_html($row['key_imdb']);
-   $key_dban = convert_to_html($row['key_dban']);
-   $key_note = convert_to_html($row['key_note']);
-   $tag_cast = convert_to_html($row['tag_cast']);
-   $tag_note = convert_to_html($row['tag_note']);
-   $remark   = convert_to_html($row['remark']);
-   
-   // 處理更多的顯示
-   $str_google = '<a href="https://www.google.com/search?q=' . $title_c . '" target="_blank">Google</a>';
-   $str_wiki = (empty($key_wiki))?'':('<a href="https://zh.wikipedia.org/wiki/' . $key_wiki . '" target="_blank">Wiki</a>');
-   $str_imdb = (empty($key_imdb))?'':('<a href="https://www.imdb.com/title/' . $key_imdb . '/" target="_blank">IMDb</a>');
-   $str_dban = (empty($key_dban))?'':('<a href="https://movie.douban.com/subject/' . $key_dban . '/" target="_blank">豆瓣</a>');
-   $str_note = (empty($key_note))?'':('<a href="https://hackmd.io/' . $key_note . '" target="_blank">HackMD</a>');
-
-
-   $data .= <<< HEREDOC
-     <tr>
-      <td>{$filmyear}</td>
-      <td>{$pub_date}</td>
-      <td><a href="display.php?uid={$uid}" onclick="save_view({$uid},'{$title_c}');">{$title_c}</a></td>
-      <td><button onclick="save_view({$uid},'{$title_c}');">{$title_c}</button></td>
-      <td>{$area}</td>
-      <td>{$rate}</td>
-      <td><a href="display_omdb.php?imdb={$key_imdb}">{$key_imdb}</a></td>
-      <td><a href="display_omdb_js.php?uid={$uid}">{$key_imdb}</a></td>
-      <!--
-      <td>{$str_google}</td>
-      <td>{$str_wiki}</td>
-      <td>{$str_imdb}</td>
-      <td>{$str_dban}</td>
-      <td>{$str_note}</td>
-      <td>{$remark}</td>
-      -->
-    </tr>
-HEREDOC;
+   case '1' :
+   case '2' :
+   case '4' :
+      $file_body = 'process_body.php';
+      break;
+      
+   case '3' :
+      $file_body = 'process_body3.php';
+      break;
 }
-*/
+include $file_body;
 
 
-// ------ 分頁處理開始 -------------------------------------
-// 
-// 取得分頁所需之資訊 (總筆數、總頁數、擷取記錄之起始位置)
-$sqlstr = "SELECT count(*) as total_rec FROM film ";
-$sth = $pdo->query($sqlstr);
-if($row = $sth->fetch(PDO::FETCH_ASSOC))
-{
-   $total_rec = $row["total_rec"];
-}
-$total_page = ceil($total_rec / $numpp);  // 計算總頁數
-
-
-// 處理分頁之超連結：上一頁、下一頁、第一首、最後頁
-$lnk_pageprev = '?page=' . (($page==1)?(1):($page-1));
-$lnk_pagenext = '?page=' . (($page==$total_page)?($total_page):($page+1));
-$lnk_pagehead = '?page=1';
-$lnk_pagelast = '?page=' . $total_page;
-
-// 處理各頁之超連結：列出所有頁數 (暫未用到，保留供參考)
-$lnk_pagelist = '';
-for($i=1; $i<=$page-1; $i++)
-{ $lnk_pagelist .= '<a href="?page='.$i.'">'.$i.'</a> '; }
-$lnk_pagelist .= '[' . $i . '] ';
-for($i=$page+1; $i<=$total_page; $i++)
-{ $lnk_pagelist .= '<a href="?page='.$i.'">'.$i.'</a> '; }
-
-// 處理各頁之超連結：下拉式跳頁選單
-$lnk_pagegoto  = '<form method="GET" action="" style="margin:0;">';
-$lnk_pagegoto .= '<select name="page" onChange="submit();">';
-for($i=1; $i<=$total_page; $i++)
-{
-   $is_current = (($i-$page)==0) ? ' SELECTED' : '';
-   $lnk_pagegoto .= '<option' . $is_current . '>' . $i . '</option>';
-}
-$lnk_pagegoto .= '</select>';
-$lnk_pagegoto .= '</form>';
-
-// 將各種超連結組合成HTML顯示畫面
-$ihc_navigator  = <<< HEREDOC
-<table border="0" style="margin-left: auto; margin-right: auto;">
- <tr>
-  <td>頁數：{$page} / {$total_page} &nbsp;&nbsp;&nbsp;</td>
-  <td>
-  <a href="{$lnk_pagehead}">第一頁</a> 
-  <a href="{$lnk_pageprev}">上一頁</a> 
-  <a href="{$lnk_pagenext}">下一頁</a> 
-  <a href="{$lnk_pagelast}">最末頁</a> &nbsp;&nbsp;
-  </td>
- <td>移至頁數：</td>
- <td>{$lnk_pagegoto}</td>
-</tr>
-</table>
-HEREDOC;
-// ------ 分頁處理結束 -------------------------------------
-
-if($total_page==1)
-{
-   $ihc_navigator = '';
-}
-
-
-$html = <<< HEREDOC
-<h2 align="center">共有 $total_rec 筆記錄</h2>
-{$ihc_navigator}
-{$data}
+// 處理要不要顯示最近瀏覽的項目
+$div_watch = <<< HEREDOC
+<div class="extra">
+ <h2>最近瀏覽項目</h2>
+ <div id="recent_view"></div>
+</div>
 HEREDOC;
 
-$js_after = '<script src="recent.js"></script>';
+if($cc_watch=='Y')
+{
+   // 需要互動的 Javascript
+   $js_after = '<script src="recent.js"></script>';
+}
+else
+{
+   $js_after = '';
+   $div_watch = '';
+}
 
 include 'pagemake.php';
-pagemake($html, '', $js_after);
+pagemake($html, '', $js_after, $div_watch);
 ?>

@@ -1,7 +1,7 @@
 <?php
 
-function pagemake($content='', $head='', $js_after='')
-{  
+function pagemake($content='', $head='', $js_after='', $div_watch='')
+{
   $html = <<< HEREDOC
 <!DOCTYPE html>
 <html>
@@ -28,27 +28,22 @@ function pagemake($content='', $head='', $js_after='')
       <a href="list_page.php">資料列表</a> 
       <a href="all_cast.php">所有人員</a> 
       <a href="all_note.php">所有標籤</a> 
-      <a href="find.php">查詢</a> 
-      <a href="stat.php">統計</a> 
+      <a href="find.php">查詢統計</a> 
+      <a href="storage.php">暫存區</a>
       <a href="setup.php">設定</a>
-   </div>
+  </div>
   
-   <div class="main">
+  <div class="main">
     {$content}
-   </div>
+  </div>
   
-   <div class="extra">
-    <h2>最近瀏覽項目</h2>
-    <div id="recent_view"></div>
-   </div>
+  {$div_watch}
 
   <div class="footer">
     <p>版權聲明</p>
   </div>
 
 </div>
-
-<script type="text/javascript" charset="UTF-8" src="recent.js"></script>
 
 {$js_after}
 </body>

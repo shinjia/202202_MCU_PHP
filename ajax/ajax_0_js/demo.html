@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>AJAX Demo</title>
+</head>
+<body>
+  Code:<select id="city">
+  	      <option value="TP">台北市</option>
+  	      <option value="NT">新北市</option>
+       </select>
+  <div id="showarea" style="background-color:#99CC55;">XXX</div>
+
+  <script>
+  	document.getElementById('city').onchange=function(){
+  		var val = document.getElementById('city').value;
+  		
+  		var showarea = document.getElementById('showarea');
+  		showarea.innerHTML = '----- ' + val + ' -----';
+  	};
+  </script>
+</body>
+</html>

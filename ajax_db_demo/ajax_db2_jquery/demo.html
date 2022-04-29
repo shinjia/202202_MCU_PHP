@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>AJAX Demo</title>
+<script type="text/javascript" src="jquery.js"></script>
+<script language="javascript">
+$(document).ready( function() {
+   $('#choice').change( function() {
+      var prog = 'list_by_address.php?code=' + $('#choice').val();
+      $('#myDivElement').load( prog );
+   });
+} );
+
+function show_detail(uid)
+{
+	var prog = 'display.php?uid=' + uid
+	$('#detail_area').load(prog);
+}
+
+</script>
+
+<style>
+.omover { background-color:#36F; color:#3FF; }
+.omout { background-color:#FC6; color:#C00; }
+</style>
+</head>
+<body>
+  Code:
+  <select name="e_code" id="choice">
+  	<option>請選擇地區</option>
+    <option>台北</option>
+    <option>桃園</option>
+    <option>新竹</option>
+    <option>台中</option>
+    <option>台南</option>
+    <option>宜蘭</option>
+    <option>台南</option>
+    <option>花蓮</option>
+    <option>高雄</option>
+  </select>
+  
+  <table border="0" width="600">
+  	<tr>
+      <td width="50%" bgcolor="#99EE77">
+         <div id="myDivElement"></div>
+      </td>
+      <td width="50%" valign="top" bgcolor="#FFAAFF">
+         <div id="detail_area"></div>
+      </td>
+    </tr>
+  
+</body>
+</html>

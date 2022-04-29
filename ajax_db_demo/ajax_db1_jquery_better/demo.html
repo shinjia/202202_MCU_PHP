@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>AJAX Demo</title>
+<script type="text/javascript" src="jquery.js"></script>
+<script language="javascript">
+$(document).ready( function() {
+  $('#choice').change(function()
+    {
+        $('#myDivElement').html('Loading...');
+        
+        $.ajax({
+            url: 'list_by_address.php',
+            data:
+            {
+                code: $('#choice').val()
+            },
+            type: 'GET',
+            dataType: 'html',
+            success: function(data,textStatus,jqXHR)
+            {
+                $('#myDivElement').html(data);
+            },
+            error: function()
+            {
+                $('#myDivElement').html('error !');
+            },
+            complete: function()
+            {
+                // nothing to do
+            }
+            
+        });
+    });
+} );
+</script>
+</head>
+<body>
+  Code:
+  <select name="e_code" id="choice">
+  	<option>請選擇地區</option>
+    <option>台北</option>
+    <option>桃園</option>
+    <option>新竹</option>
+    <option>台中</option>
+    <option>台南</option>
+    <option>宜蘭</option>
+    <option>台南</option>
+    <option>花蓮</option>
+    <option>高雄</option>
+  </select>
+  
+  <div id="myDivElement" style="background-color:#AAFFCC;"></div>
+  
+</body>
+</html>

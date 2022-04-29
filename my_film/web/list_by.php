@@ -2,14 +2,18 @@
 // 含分頁之資料列表
 include '../common/config.php';
 include '../common/utility.php';
+include '../common/define.php';
+
+$cc_numpp = isset($_COOKIE['cc_numpp']) ? $_COOKIE['cc_numpp'] : DEF_CC_NUMPP;
+$cc_order = isset($_COOKIE['cc_order']) ? $_COOKIE['cc_order'] : DEF_CC_ORDER;
+$cc_style = isset($_COOKIE['cc_style']) ? $_COOKIE['cc_style'] : DEF_CC_STYLE;
+$cc_watch = isset($_COOKIE['cc_watch']) ? $_COOKIE['cc_watch'] : DEF_CC_WATCH;
 
 $type = isset($_GET['type']) ? $_GET['type'] : 'X';
 $key = isset($_GET['key']) ? $_GET['key'] : 'X*&^*';
 $page = isset($_GET['page']) ? $_GET['page'] : 1;   // 目前的頁碼
 
-$numpp = 12;  // 每頁的筆數
-$numpp = isset($_COOKIE['numpp']) ? $_COOKIE['numpp'] : $numpp;
-$numpp = isset($_GET['numpp']) ? $_GET['numpp'] : $numpp;
+$numpp = $cc_numpp;  // 每頁的筆數
 
 /* 依據 type 會有不同結果的變數 */
 $title_type = '';  // 標題
@@ -53,8 +57,18 @@ switch($type)
       break;
 
    case 'NOTE' :  // 標籤
-      $title_type = '標籤有『' . $key . '』的電影';
+      $title_type = '關於『' . $key . '』標籤的電影';
       $sql_where = "WHERE tag_note LIKE '%#" . $key . "%' ";
+      break;
+   
+   case 'REMARK' :  // 備註
+      $title_type = '備註有『' . $key . '』的電影';
+      $sql_where = "WHERE remark LIKE '%" . $key . "%' ";
+      break;
+
+   case 'STORAGE' :  // 暫存區
+      $title_type = '暫存區的電影';
+      $sql_where = "WHERE uid IN (" . $key . ") ";
       break;
    
    default:
@@ -72,82 +86,79 @@ $tmp_start = ($page-1) * $numpp;  // 擷取記錄之起始位置
 // 寫出 SQL 語法
 $sqlstr = "SELECT * FROM film ";
 $sqlstr .= $sql_where;
+$sqlstr .= " ORDER BY pub_date ";
+$sqlstr .= ($cc_order=='NEW') ? "DESC" : "";
 $sqlstr .= " LIMIT " . $tmp_start . "," . $numpp;
 
-include 'process_data.php';  // 會得到 $data 內容
 
-// ------ 分頁處理開始 -------------------------------------
-// 
-// 取得分頁所需之資訊 (總筆數、總頁數、擷取記錄之起始位置)
-$sqlstr = "SELECT count(*) as total_rec FROM film ";
-$sqlstr .= $sql_where;
-
-$sth = $pdo->query($sqlstr);
-if($row = $sth->fetch(PDO::FETCH_ASSOC))
+// Part1: 顯示風格
+$file_data = 'process_data.php';  // 預設
+switch($cc_style)
 {
-   $total_rec = $row["total_rec"];
+   case '1':
+      $file_data = 'process_data1.php';
+      break;
+
+   case '2':
+      $file_data = 'process_data2.php';
+      break;
+
+   case '3':
+      $file_data = 'process_data3.php';
+      break;
+
+   case '4':
+      $file_data = 'process_data4.php';
+      break;
+
+   default:
 }
-$total_page = ceil($total_rec / $numpp);  // 計算總頁數
+
+include $file_data;
 
 
-// 處理分頁之超連結：上一頁、下一頁、第一首、最後頁
-$lnk_pageprev = '?type=' . $type . '&key=' . $key . '&page=' . (($page==1)?(1):($page-1));
-$lnk_pagenext = '?type=' . $type . '&key=' . $key . '&page=' . (($page==$total_page)?($total_page):($page+1));
-$lnk_pagehead = '?type=' . $type . '&key=' . $key . '&page=1';
-$lnk_pagelast = '?type=' . $type . '&key=' . $key . '&page=' . $total_page;
+// Part2: 處理分頁
+$file_page = 'process_page.php';  // 預設
+include $file_page;
 
-// 處理各頁之超連結：列出所有頁數 (暫未用到，保留供參考)
-$lnk_pagelist = '';
-for($i=1; $i<=$page-1; $i++)
-{ $lnk_pagelist .= '<a href="?type=' . $type . '&key=' . $key . '&page='.$i.'">'.$i.'</a> '; }
-$lnk_pagelist .= '[' . $i . '] ';
-for($i=$page+1; $i<=$total_page; $i++)
-{ $lnk_pagelist .= '<a href="?type=' . $type . '&key=' . $key . '&page='.$i.'">'.$i.'</a> '; }
 
-// 處理各頁之超連結：下拉式跳頁選單
-$lnk_pagegoto  = '<form method="GET" action="" style="margin:0;">';
-$lnk_pagegoto .= '<select name="page" onChange="submit();">';
-for($i=1; $i<=$total_page; $i++)
+// Parr3: 處理Boby
+$file_body = 'process_body.php';  // 預設
+switch($cc_style)
 {
-   $is_current = (($i-$page)==0) ? ' SELECTED' : '';
-   $lnk_pagegoto .= '<option' . $is_current . '>' . $i . '</option>';
+   case '1' :
+   case '2' :
+   case '4' :
+      $file_body = 'process_body.php';
+      break;
+      
+   case '3' :
+      $file_body = 'process_body3.php';
+      break;
 }
-$lnk_pagegoto .= '</select>';
-$lnk_pagegoto .= '<input type="hidden" name="type" value="' . $type . '">';
-$lnk_pagegoto .= '<input type="hidden" name="key" value="' . $key . '">';
-$lnk_pagegoto .= '</form>';
+include $file_body;
 
-// 將各種超連結組合成HTML顯示畫面
-$ihc_navigator  = <<< HEREDOC
-<table border="0" style="margin-left: auto; margin-right: auto;">
- <tr>
-  <td>頁數：{$page} / {$total_page} &nbsp;&nbsp;&nbsp;</td>
-  <td>
-  <a href="{$lnk_pagehead}">第一頁</a> 
-  <a href="{$lnk_pageprev}">上一頁</a> 
-  <a href="{$lnk_pagenext}">下一頁</a> 
-  <a href="{$lnk_pagelast}">最末頁</a> &nbsp;&nbsp;
-  </td>
- <td>移至頁數：</td>
- <td>{$lnk_pagegoto}</td>
-</tr>
-</table>
+
+// 處理要不要顯示最近瀏覽的項目
+$div_watch = <<< HEREDOC
+<div class="extra">
+ <h2>最近瀏覽項目</h2>
+ <div id="recent_view"></div>
+</div>
 HEREDOC;
-// ------ 分頁處理結束 -------------------------------------
 
-if($total_page==1)
+if($cc_watch=='Y')
 {
-   $ihc_navigator = '';
+   // 需要互動的 Javascript
+   $js_after = '<script src="recent.js"></script>';
+}
+else
+{
+   $js_after = '';
+   $div_watch = '';
 }
 
-
-$html = <<< HEREDOC
-<h2 align="center">{$title_type}</h2>
-<p align="center">共有 $total_rec 筆記錄</p>
-{$ihc_navigator}
-{$data}
-HEREDOC;
 
 include 'pagemake.php';
-pagemake($html, '');
+pagemake($html, '', $js_after, $div_watch);
 ?>

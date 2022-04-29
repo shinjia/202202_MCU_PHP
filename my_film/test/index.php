@@ -35,7 +35,7 @@
 <h2>工具程式</h2>
 <ul>
     <li><a href="get_omdb.php?imdb=tt6710474">OMDB API</a></li>
-    <li><a href="batch_get_omdb_poster.php">batch_get_omdb_poster.php 批次抓 OMDB 的圖並存檔</a></li>
+    <li><a href="batch_get_omdb_poster.php">batch_get_omdb_poster.php 批次抓 OMDB 的圖並存檔</a> (執行後要等一陣子才會回應)</li>
 </ul>
 
 </body>
